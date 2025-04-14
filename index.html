@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Bulb Simulator</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #333;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .bulb {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #666;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .bulb.on {
+            background-color: #ffeb3b;
+            box-shadow: 0 0 50px #ffeb3b;
+        }
+
+        .bulb.broken {
+            background-color: #666;
+            box-shadow: none;
+            opacity: 0.5;
+        }
+
+        .switch {
+            width: 60px;
+            height: 30px;
+            background-color: #444;
+            border-radius: 15px;
+            margin: 20px auto;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .switch::before {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: #fff;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .switch.on {
+            background-color: #4CAF50;
+        }
+
+        .switch.on::before {
+            left: 32px;
+        }
+
+        .click-count {
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bulb" id="bulb"></div>
+        <div class="switch" id="switch"></div>
+        <div class="click-count" id="clickCount">Clicks: 0</div>
+    </div>
+
+    <script>
+        const bulb = document.getElementById('bulb');
+        const toggleSwitch = document.getElementById('switch');
+        const clickCountElement = document.getElementById('clickCount');
+        let isOn = false;
+        let clickCount = 0;
+        let broken = false;
+
+        // Sound effects
+        const switchSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU');
+        const breakSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ');
+
+        toggleSwitch.addEventListener('click', () => {
+            if (broken) return;
+            
+            isOn = !isOn;
+            toggleSwitch.classList.toggle('on');
+            bulb.classList.toggle('on');
+            clickCount++;
+            clickCountElement.textContent = `Clicks: ${clickCount}`;
+            
+            // Play switch sound
+            switchSound.play();
+
+            // Random chance to break after 5 clicks
+            if (clickCount >= 5 && Math.random() < 0.3) {
+                bulb.classList.add('broken');
+                broken = true;
+                // Play break sound
+                breakSound.play();
+            }
+        });
+
+        // Add some visual feedback when clicking the bulb
+        bulb.addEventListener('click', () => {
+            if (!broken) {
+                bulb.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    bulb.style.transform = 'scale(1)';
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
